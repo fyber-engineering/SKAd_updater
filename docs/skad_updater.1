@@ -1,0 +1,122 @@
+.TH "SKAD_UPDATER" "1" "SKAD_UPDATER" "1" "FYBER SKAD_UPDATER"
+.hy
+.SH NAME
+.PP
+\f[I]skad_updater\f[R] -- Update your \f[C]Info.plist\f[R] file with
+up-to-date SKAdNetworks keys.
+.SH SYNOPSIS
+.IP
+.nf
+\f[C]
+ skad_updater ( (--help | -h) | (--show_networks) | --plist_path \f[I]<plist-file-path>\f[R] (--network_list \f[I]<comma-separated-network-names>\f[R] | --pod_path \f[I]<pod-file-path>\f[R]) [--dry_run] )
+\f[R]
+.fi
+.SH DESCRIPTION
+.PP
+Pull the most up-to-date SKAdNetworks from
+SKAdNetworks (\f[I]https://github.com/fyber-engineering/SKAdNetworks\f[R]) and
+updates the info.plist file appropriately.
+.SS The list of required networks can be requested in two ways:
+.IP "1." 3
+Explicitly:
+.RS 4
+.IP "1." 3
+Asking for a list of supported ad network names with the
+\f[C]--show_networks\f[R] flag.
+.IP "2." 3
+Passing the \f[C][--network_list \f[I]<network-name-list>\f[R]]\f[R] parameter
+where is a comma separated list of network names.
+.RE
+.IP "2." 3
+Automatically deriving the required networks from a \f[C]pod file\f[R],
+by using the \f[C][ --pod_path \f[I]<pod-file-path>\f[R] ]\f[R] parameter where
+\f[C]<pod-file-path>\f[R] is the path to the pod file.
+.SH PARAMETERS
+.PP
+.TS
+tab(@);
+l l.
+T{
+Command
+T}@T{
+Description
+T}
+_
+T{
+--plist_path \f[I]<plist-file-path>\f[R]
+T}@T{
+The plist file path.
+T}
+
+T{
+--network_list \f[I]<comma-separated-network-names>\f[R]
+T}@T{
+\f[B]Only if no pod_path\f[R].
+Request for a specific list of networks to update.
+The argument is a comma separated list of network names.
+T}
+
+T{
+--pod_path \f[I]<pod-file-path>\f[R]
+T}@T{
+\f[B]Only if no network_list\f[R].
+Update all the networks found in the pod file.
+The argument is the path to the pod file.
+T}
+.TE
+.SS Optional Parameters
+.PP
+.TS
+tab(@);
+l l.
+T{
+Command
+T}@T{
+Description
+T}
+_
+T{
+--dry_run
+T}@T{
+Perform a dry-run.
+Prints out the new \f[C]plist\f[R] file instead of overwriting.
+T}
+
+T{
+--show_networks
+T}@T{
+Show the list of supported network names.
+T}
+
+T{
+--help, -h
+T}@T{
+Give a help message and exit.
+T}
+.TE
+.SH EXAMPLES
+.IP
+.nf
+\f[C]
+ skad_updater --help
+
+ skad_updater --show_networks
+
+ skad_updater --plist_path \f[I]<Path to plist>\f[R] --pod_path \f[I]<Path to Pod File>\f[R]
+
+ skad_updater --plist_path \f[I]<Path to plist>\f[R] --pod_path \f[I]<Path to Pod File>\f[R] --dry_run
+
+ skad_updater --plist_path \f[I]<Path to plist>\f[R] --network_list \f[I]<CSV network list>\f[R]
+
+ skad_updater --plist_path \f[I]<Path to plist>\f[R] --network_list \f[I]<CSV network list>\f[R] --dry_run
+
+\f[R]
+.fi
+.SH NOTE
+.PP
+Current/Previous info.plist will be backed up to info.plist.bak.X in the
+same directory in case the plist is modified, where X is the number of
+backup.
+.SH AUTHOR
+.PP
+Fyber ( <support@fyber.com> )

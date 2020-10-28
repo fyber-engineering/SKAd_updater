@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>FairBid Prod</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.0</string>
+		<key>CFBundleVersion</key>
+		<string>0</string>
+		<key>GADApplicationIdentifier</key>
+		<string>ca-app-pub-3940256099942544~1458002511</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
+		<key>NSCalendarsUsageDescription</key>
+		<string>This app requires access to the calendar</string>
+		<key>NSLocationUsageDescription</key>
+		<string>Let the app use your location to pass demographic information to ad networks?</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Let the app use your location to pass demographic information to ad networks?</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>This app requires access to the photo library</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>This app requires access to the photo library</string>
+		<key>UILaunchStoryboardName</key>
+		<string>Launch</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UIRequiredDeviceCapabilities</key>
+		<array>
+			<string>armv7</string>
+		</array>
+		<key>UIRequiresFullScreen</key>
+		<true/>
+		<key>UIStatusBarHidden</key>
+		<false/>
+		<key>UIStatusBarStyle</key>
+		<string>UIStatusBarStyleLightContent</string>
+		<key>UIStatusBarTintParameters</key>
+		<dict>
+			<key>UINavigationBar</key>
+			<dict>
+				<key>Style</key>
+				<string>UIBarStyleDefault</string>
+				<key>Translucent</key>
+				<false/>
+			</dict>
+		</dict>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<true/>
+		<key>SKAdNetworkItems</key>
+		<array>
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>4PFYVQ9L8R.skadnetwork</string>
+			</dict>
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>YCLNXRL5PM.skadnetwork</string>
+			</dict>
+			<dict>
+				<key>SKAdNetworkIdentifier</key>
+				<string>V72QYCH5UU.skadnetwork</string>
+			</dict>
+		</array>
+	</dict>
+</plist>

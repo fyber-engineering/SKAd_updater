@@ -1,0 +1,6 @@
+/build/*
+/CMakeCache.txt
+/extern/
+/.vscode/
+/tests/servermock/venv/
+/tests/servermock/__pycache__/
