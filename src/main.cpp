@@ -24,7 +24,7 @@ int main(int argc, char** argv)
   auto manager_api =
       fyber::ManagerApi((server_host_override != nullptr) ? server_host_override : "https://network-setup.fyber.com");
 
-  spdlog::info("Welcome to SK Ad Updater ( version {} )", skad_updater_VERSION);
+  spdlog::info("Welcome to SKAdNetwork plist Updater ( version {} )", skad_updater_VERSION);
 
   try {
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
     auto plist = fyber::Plist(options.plist_path.value());
 
-    spdlog::info("Existing SKAdNetworks: {}", plist.existing_sk_ad_network_items_str());
+    spdlog::info("Existing SKAdNetwork IDs: {}", plist.existing_sk_ad_network_items_str());
 
     std::vector<std::string> network_list;
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
     plist.set_sk_ad_network_items_for_update(manager_api.get_sk_ad_networks(network_list));
 
-    spdlog::info("New SKAdNetworks: {}", plist.new_sk_ad_network_items_str());
+    spdlog::info("New SKAdNetwork IDs: {}", plist.new_sk_ad_network_items_str());
 
     if (plist.should_update()) {
       update_network_IDs(options, plist);
@@ -105,7 +105,7 @@ void update_network_IDs(const fyber::Options& options, fyber::Plist& plist)
   std::string raw_new_file = plist.build_plist_SKAdNetworkItems();
 
   if (options.dry_run) {
-    spdlog::info("These network IDs will be added: {}", plist.new_sk_ad_network_items_str());
+    spdlog::info("These SKAdNetwork IDs will be added: {}", plist.new_sk_ad_network_items_str());
     spdlog::debug("Printing modified `{}`", options.plist_path.value());
     spdlog::debug(raw_new_file);
   } else {
