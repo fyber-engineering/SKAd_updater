@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -x
 
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 sleep 2
 cmake --build build --target format

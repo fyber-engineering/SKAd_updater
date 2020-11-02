@@ -33,7 +33,6 @@ target 'Test App Prod' do
   project 'FairBid'
   test_app_pods
 
-  pod 'FairBidSDK', :podspec => '.'
 end
 
 ['SDK Test App Tests', 'FairBidSDK Tests'].each do |target_name|

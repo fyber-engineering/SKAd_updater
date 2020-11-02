@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <functional>
 #include <map>
 #include <set>
@@ -63,6 +64,25 @@ struct common
     }
 
     return map_values;
+  }
+
+  /// Generate a string out of a file status
+  /// \param status file status
+  /// \return status in the form of a string
+  static std::string file_status_to_string(const std::filesystem::file_status& status)
+  {
+    std::string description;
+
+    if (std::filesystem::is_regular_file(status)) description += "-regular file-";
+    if (std::filesystem::is_directory(status)) description += "-directory-";
+    if (std::filesystem::is_block_file(status)) description += "-block device-";
+    if (std::filesystem::is_character_file(status)) description += "-character device-";
+    if (std::filesystem::is_fifo(status)) description += "-named IPC pipe-";
+    if (std::filesystem::is_socket(status)) description += "-named IPC socket-";
+    if (std::filesystem::is_symlink(status)) description += "-symlink-";
+    if (!std::filesystem::exists(status)) description += "-does not exist-";
+
+    return description;
   }
 
   /// Determine if a string [str] starts with another string [term]
