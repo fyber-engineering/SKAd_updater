@@ -2,7 +2,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include <algorithm>
 #include <filesystem>
 #include <pugixml.hpp>
 #include <utility>
@@ -26,6 +25,10 @@ struct xml_string_writer : pugi::xml_writer
 
 Plist::Plist(string file_path) : _file_path(std::move(file_path)), _sk_ad_network_items(set<string>())
 {
+  if (!fs::is_regular_file(_file_path)) {
+    throw ExitMessage::NotAFile("Provided plist_file_path is invalid : " +
+                                common::file_status_to_string(fs::status(_file_path)));
+  }
   _sk_ad_network_items = parseFile();
 }
 

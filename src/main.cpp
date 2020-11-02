@@ -12,6 +12,7 @@
 
 void set_log_level();
 std::vector<std::string> networks_list_by_podfile(const fyber::ManagerApi& manager_api, const fyber::Options& options);
+std::vector<std::string> networks_list_by_options(const fyber::Options& options);
 void update_network_IDs(const fyber::Options& options, fyber::Plist& plist);
 
 int main(int argc, char** argv)
@@ -24,7 +25,7 @@ int main(int argc, char** argv)
   auto manager_api =
       fyber::ManagerApi((server_host_override != nullptr) ? server_host_override : "https://network-setup.fyber.com");
 
-  spdlog::info("Welcome to SKAdNetwork plist Updater ( version {} )", skad_updater_VERSION);
+  spdlog::info("Welcome to SKAd Updater ( version {} )", skad_updater_VERSION);
 
   try {
 
@@ -43,26 +44,26 @@ int main(int argc, char** argv)
       return 0;
     }
 
-    auto plist = fyber::Plist(options.plist_path.value());
+    auto plist = fyber::Plist(options.plist_file_path.value());
 
-    spdlog::info("Existing SKAdNetwork IDs: {}", plist.existing_sk_ad_network_items_str());
+    spdlog::info("Existing SKAdNetworks: {}", plist.existing_sk_ad_network_items_str());
 
     std::vector<std::string> network_list;
 
-    if (options.pod_path.has_value()) {
+    if (options.pod_file_path.has_value()) {
       network_list = networks_list_by_podfile(manager_api, options);
     } else {
-      network_list = options.network_list.value();
+      network_list = networks_list_by_options(options);
     }
 
     plist.set_sk_ad_network_items_for_update(manager_api.get_sk_ad_networks(network_list));
 
-    spdlog::info("New SKAdNetwork IDs: {}", plist.new_sk_ad_network_items_str());
+    spdlog::info("New SKAdNetworks: {}", plist.new_sk_ad_network_items_str());
 
     if (plist.should_update()) {
       update_network_IDs(options, plist);
     } else {
-      spdlog::info("Nothing to update. `{}` unchanged.", options.plist_path.value());
+      spdlog::info("Nothing to update. `{}` unchanged.", options.plist_file_path.value());
     }
 
   } catch (fyber::ExitMessage& err) {
@@ -84,14 +85,33 @@ int main(int argc, char** argv)
 /// \param manager_api - the API to the SKAdNetwork listing server
 /// \param options - cli options
 /// \return a list of network names
+/// \throws EmptyPodFile if the pod file doesn't contain supported network names.
 std::vector<std::string> networks_list_by_podfile(const fyber::ManagerApi& manager_api, const fyber::Options& options)
 {
   auto supported_networks = manager_api.get_networks();
 
-  auto podfile = fyber::PodFile(options.pod_path.value(), supported_networks);
+  auto podfile = fyber::PodFile(options.pod_file_path.value(), supported_networks);
 
   auto networks = podfile.get_used_networks();
 
+  if (networks.empty()) {
+    throw fyber::ExitMessage::EmptyPodFile("No supported networks found in your Podfile");
+  }
+
+  return networks;
+}
+
+/// Get the list of networks to fetch provided by the cli options
+/// \param options - cli options
+/// \return a list of network names
+/// \throws EmptyNetworkList if the provided list is empty
+std::vector<std::string> networks_list_by_options(const fyber::Options& options)
+{
+  auto networks = options.network_list.value();
+
+  if (networks.empty()) {
+    throw fyber::ExitMessage::EmptyNetworkList("A non-empty list of networks must be provided");
+  }
   return networks;
 }
 
@@ -100,13 +120,13 @@ std::vector<std::string> networks_list_by_podfile(const fyber::ManagerApi& manag
 /// \param plist
 void update_network_IDs(const fyber::Options& options, fyber::Plist& plist)
 {
-  spdlog::info("Updating `{}`", options.plist_path.value());
+  spdlog::info("Updating `{}`", options.plist_file_path.value());
 
   std::string raw_new_file = plist.build_plist_SKAdNetworkItems();
 
   if (options.dry_run) {
-    spdlog::info("These SKAdNetwork IDs will be added: {}", plist.new_sk_ad_network_items_str());
-    spdlog::debug("Printing modified `{}`", options.plist_path.value());
+    spdlog::info("These network IDs will be added: {}", plist.new_sk_ad_network_items_str());
+    spdlog::debug("Printing modified `{}`", options.plist_file_path.value());
     spdlog::debug(raw_new_file);
   } else {
     plist.update_file(true);

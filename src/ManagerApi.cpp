@@ -96,7 +96,7 @@ map<string, vector<string>> ManagerApi::parse_plist_response(const char* body)
       sdk_ad_networks.emplace(network_name, network_values);
     }
   } catch (std::exception& ex) {
-    throw ExitMessage::InvalidNetworks("SK Ad Networks parsing error: " + string(ex.what()));
+    throw ExitMessage::InvalidNetworks("SKAdNetworks parsing error: " + string(ex.what()));
   }
 
   return sdk_ad_networks;

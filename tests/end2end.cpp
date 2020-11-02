@@ -26,8 +26,7 @@ inline const fs::path bin_path = skad_updater_BIN;
 
 inline const string mockserver_addr = "localhost:5000";
 
-inline const string WelcomeToSkadMsg =
-    string("*** Welcome to SK Ad Updater ( version ") + skad_updater_VERSION + " )\n";
+inline const string WelcomeToSkadMsg = string("*** Welcome to SKAd Updater ( version ") + skad_updater_VERSION + " )\n";
 
 std::string exec(const string& command)
 {
@@ -153,19 +152,19 @@ class End2End : public ::testing::Test
 TEST_F(End2End, Help)
 {
   auto result = run_skad_updater("--help");
-  EXPECT_PRED2(log_starts_with, result, "Automatically update your SK Ad Network Items");
+  EXPECT_PRED2(log_starts_with, result, "Automatically update your SKAdNetwork Items");
 
   result = run_skad_updater("-h");
-  EXPECT_PRED2(log_starts_with, result, "Automatically update your SK Ad Network Items");
+  EXPECT_PRED2(log_starts_with, result, "Automatically update your SKAdNetwork Items");
 
   result = run_skad_updater("--show_networks -h");
-  EXPECT_PRED2(log_starts_with, result, "Automatically update your SK Ad Network Items");
+  EXPECT_PRED2(log_starts_with, result, "Automatically update your SKAdNetwork Items");
 
   result = run_skad_updater("--unknown_param 323 -fl -h --more_unknown_flag");
   EXPECT_PRED2(log_starts_with, result, "*** Option ‘unknown_param’ does not exist");
 
-  result = run_skad_updater("--plist_path " + (resources / "Info.plist").string() + " -h --network_list=Facebook");
-  EXPECT_PRED2(log_starts_with, result, "Automatically update your SK Ad Network Items");
+  result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() + " -h --network_list=Facebook");
+  EXPECT_PRED2(log_starts_with, result, "Automatically update your SKAdNetwork Items");
 }
 
 TEST_F(End2End, ShowNetworks)
@@ -176,7 +175,7 @@ TEST_F(End2End, ShowNetworks)
                 "Supported network names: AdColony,Google-Mobile-Ads-SDK,ChartboostSDK,Applovin,Unknown_network")
                    .c_str());
 
-  result = run_skad_updater("--show_networks --plist_path " + (resources / "Info.plist").string() +
+  result = run_skad_updater("--show_networks --plist_file_path " + (resources / "Info.plist").string() +
                             " --network_list=Facebook");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
@@ -186,8 +185,8 @@ TEST_F(End2End, ShowNetworks)
 
 TEST_F(End2End, NetworkListUnchanged)
 {
-  auto result =
-      run_skad_updater("--plist_path " + (resources / "Info.plist").string() + " --network_list=Facebook --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --network_list=Facebook --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
@@ -199,8 +198,8 @@ TEST_F(End2End, NetworkListUnchanged)
 
 TEST_F(End2End, NetworkListNewNetworks)
 {
-  auto result =
-      run_skad_updater("--plist_path " + (resources / "Info.plist").string() + " --network_list=Applovin --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --network_list=Applovin --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
@@ -214,8 +213,8 @@ TEST_F(End2End, NetworkListNewNetworks)
 
 TEST_F(End2End, PodFileNewNetworks)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
@@ -229,14 +228,12 @@ TEST_F(End2End, PodFileNewNetworks)
 
 TEST_F(End2End, PodFileNoNetworks)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "Info.plist").string() +
-                                 " --pod_path=" + (resources / "NoNetworksPodfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "NoNetworksPodfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
-                "*** New SKAdNetworks: \n"
-                "*** Nothing to update. `" +
-                resources.string() + "/Info.plist` unchanged.\n")
+                "*** No supported networks found in your Podfile\n")
                    .c_str());
 }
 
@@ -245,8 +242,8 @@ TEST_F(End2End, PodFileNewIDsOverridingExistingNetworksAreJustAdded)
 
   with_mock_data(
       R"({"AdColony":["blskdfjl2e3.skadnetwork"],"AppLovinSDK":["cstr6suwn9.skadnetwork"]})", [](const string& data) {
-        auto result = run_skad_updater("--plist_path " + (resources / "Info.plist").string() +
-                                       " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+        auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                       " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
         ASSERT_STREQ(
             result.c_str(),
             (WelcomeToSkadMsg +
@@ -262,8 +259,8 @@ TEST_F(End2End, PodFileNewIDsOverridingExistingNetworksAreJustAdded)
 
 TEST_F(End2End, PlistIsEmpty)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "empty.Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "empty.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: \n"
@@ -279,8 +276,8 @@ TEST_F(End2End, PlistIsEmpty)
 
 TEST_F(End2End, PlistIsFull)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "full.Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "full.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 22mmun2rn5.skadnetwork, 238da6jt44.skadnetwork, 23zd986j2c.skadnetwork, "
@@ -312,8 +309,8 @@ TEST_F(End2End, PlistIsFull)
 
 TEST_F(End2End, PlistHasNoSKAdNetworksKey)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "nosk.Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "nosk.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(), (WelcomeToSkadMsg +
                                 "*** Existing SKAdNetworks: \n"
                                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, "
@@ -328,8 +325,8 @@ TEST_F(End2End, PlistHasNoSKAdNetworksKey)
 
 TEST_F(End2End, PlistIsSimple)
 {
-  auto result = run_skad_updater("--plist_path " + (resources / "simple.Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + " --dry_run");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "simple.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(), (WelcomeToSkadMsg +
                                 "*** Existing SKAdNetworks: 4PFYVQ9L8R, YCLNXRL5PM, cstr6suwn9\n"
                                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, "
@@ -342,6 +339,42 @@ TEST_F(End2End, PlistIsSimple)
                                    .c_str());
 }
 
+TEST_F(End2End, InvalidPathPList)
+{
+  auto result = run_skad_updater("--plist_file_path " + resources.string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
+  ASSERT_STREQ(result.c_str(), (WelcomeToSkadMsg + "*** Provided plist_file_path is invalid : -directory-\n").c_str());
+}
+
+TEST_F(End2End, InvalidPathPodfile)
+{
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --pod_file_path=" + resources.string() + " --dry_run");
+  ASSERT_STREQ(result.c_str(),
+               (WelcomeToSkadMsg +
+                "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Provided pod_file_path is invalid : -directory-\n")
+                   .c_str());
+}
+
+TEST_F(End2End, PathPodfileNotExits)
+{
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "ImNotExisting").string() + " --dry_run");
+  ASSERT_STREQ(result.c_str(),
+               (WelcomeToSkadMsg +
+                "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Provided pod_file_path is invalid : -does not exist-\n")
+                   .c_str());
+}
+
+TEST_F(End2End, PListNotExists)
+{
+  auto result = run_skad_updater("--plist_file_path " + (resources / "NotExisting.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
+  ASSERT_STREQ(result.c_str(),
+               (WelcomeToSkadMsg + "*** Provided plist_file_path is invalid : -does not exist-\n").c_str());
+}
 TEST_F(End2End, NoDryRun)
 {
   string plist_old = read_file(resources / "Info.plist");
@@ -358,8 +391,8 @@ TEST_F(End2End, NoDryRun)
   ASSERT_EQ(plist_old.find("blskdfjl2e3.skadnetwork"), string::npos);  // added
   ASSERT_EQ(plist_old.find("cstr6suwn9.skadnetwork"), string::npos);   // added
 
-  auto result = run_skad_updater("--plist_path " + (resources / "Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + "");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + "");
 
   string plist_new = read_file(resources / "Info.plist");
   string plist_bak = read_file(resources / "Info.plist.bak.1");
@@ -409,8 +442,8 @@ TEST_F(End2End, NoDryRunEmptyPlist)
   ASSERT_EQ(plist_old.find("blskdfjl2e3.skadnetwork"), string::npos);  // not found
   ASSERT_EQ(plist_old.find("cstr6suwn9.skadnetwork"), string::npos);   // not found
 
-  auto result = run_skad_updater("--plist_path " + (resources / "empty.Info.plist").string() +
-                                 " --pod_path=" + (resources / "Podfile").string() + "");
+  auto result = run_skad_updater("--plist_file_path " + (resources / "empty.Info.plist").string() +
+                                 " --pod_file_path=" + (resources / "Podfile").string() + "");
 
   string plist_new = read_file(resources / "empty.Info.plist");
   string plist_bak = read_file(resources / "empty.Info.plist.bak.1");
@@ -460,17 +493,17 @@ TEST_F(End2End, NoDryRunMultiBackup)
     ASSERT_EQ(plist_old.find("five_5"), string::npos);   // not found
 
     auto result1 =
-        run_skad_updater("--plist_path " + (resources / "empty.Info.plist").string() + " --network_list=AdColony");
+        run_skad_updater("--plist_file_path " + (resources / "empty.Info.plist").string() + " --network_list=AdColony");
     string plist_new1 = read_file(resources / "empty.Info.plist");
     string plist_bak1 = read_file(resources / "empty.Info.plist.bak.1");
 
     auto result2 =
-        run_skad_updater("--plist_path " + (resources / "empty.Info.plist").string() + " --network_list=Admob");
+        run_skad_updater("--plist_file_path " + (resources / "empty.Info.plist").string() + " --network_list=Admob");
     string plist_new2 = read_file(resources / "empty.Info.plist");
     string plist_bak2 = read_file(resources / "empty.Info.plist.bak.2");
 
     auto result3 =
-        run_skad_updater("--plist_path " + (resources / "empty.Info.plist").string() + " --network_list=Facebook");
+        run_skad_updater("--plist_file_path " + (resources / "empty.Info.plist").string() + " --network_list=Facebook");
     string plist_new3 = read_file(resources / "empty.Info.plist");
     string plist_bak3 = read_file(resources / "empty.Info.plist.bak.3");
 

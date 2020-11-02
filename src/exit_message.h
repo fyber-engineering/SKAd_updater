@@ -17,9 +17,12 @@ struct ExitMessage : std::runtime_error
   static ExitMessage InvalidArguments(const std::string &message) { return ExitMessage(1, message); };
   static ExitMessage InvalidPlist(const std::string &message) { return ExitMessage(2, message); };
   static ExitMessage InvalidPodFile(const std::string &message) { return ExitMessage(3, message); };
-  static ExitMessage InvalidNetworks(const std::string &message) { return ExitMessage(4, message); };
-  static ExitMessage ServerUnavailable(const std::string &message) { return ExitMessage(6, message); };
-  static ExitMessage RemoteAPIFailure(const std::string &message) { return ExitMessage(7, message); };
+  static ExitMessage EmptyPodFile(const std::string &message) { return ExitMessage(4, message); };
+  static ExitMessage EmptyNetworkList(const std::string &message) { return ExitMessage(5, message); };
+  static ExitMessage InvalidNetworks(const std::string &message) { return ExitMessage(6, message); };
+  static ExitMessage ServerUnavailable(const std::string &message) { return ExitMessage(7, message); };
+  static ExitMessage RemoteAPIFailure(const std::string &message) { return ExitMessage(8, message); };
+  static ExitMessage NotAFile(const std::string &message) { return ExitMessage(9, message); };
 
   static ExitMessage Oops(const std::string &message) { return ExitMessage(13, message); };
 };
