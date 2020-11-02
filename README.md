@@ -49,10 +49,23 @@ SKAdNetwork IDs Updater
 
      skad_updater --plist_path <Path to plist> --network_list <CSV network list> --dry_run
 
-### NOTE
+### Backups
 
 Current/Previous info.plist will be backed up to info.plist.bak.X in the same directory in case the plist is modified, where X is the number of backup.
 
+### Reformatting the `plist` file
+
+After new networks were added, the `plist` file will be formatted according to the standard XML indentation formatting. 
+The xcode PList indentaion formatting might differ from the standard XML's. 
+*Don't worry, it works the same.*
+
+Making a modification to the `plist` inside xcode will reformat it back to the xcode standard, Which might result in weird pull-request diffs.
+
+If this is an issue for you, you can run this after the `skad_updater` to reformat according to the xcode standard:
+
+```
+plutil -convert xml1 <path_to_plist_file>
+```
 
 ### Debugging
 #### Mock service
