@@ -1,6 +1,6 @@
 # SKAd Updater 
 
-SK-Ad-Network auto updater
+SKAdNetwork IDs Updater
 
 ## Install
 
@@ -15,7 +15,7 @@ SK-Ad-Network auto updater
     skad_updater ( (--help | -h) | (--show_networks) | --plist_path plist-file-path (--network_list <comma-separated-network-names> | --pod_path <pod-file-path>) [--dry_run] )
 
 ### Description
- Pull the most up-to-date SKAdNetworks from https://github.com/fyber-engineering/SKAdNetworks and updates the info.plist appropriately.
+ Pull the most up-to-date SKAdNetwork IDs from https://github.com/fyber-engineering/SKAdNetworks and updates the info.plist appropriately.
 
  The list of required networks can be requested in two ways:
 

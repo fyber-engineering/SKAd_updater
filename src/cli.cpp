@@ -44,13 +44,13 @@ string Options::to_string() const
 Options cli::read_args(int argc, char **argv)
 {
   try {
-    cxxopts::Options options("skad_updater", "Automatically update your SK Ad Network Items");
+    cxxopts::Options options("skad_updater", "Automatically update your SKAdNetwork IDs");
     // clang-format off
     options.add_options()
         (plist_path_Id, "The plist file path", cxxopts::value<string>())
         (network_list_Id, "Only if no pod_path. Request for a specific list of networks to update. "
                           "The argument is a comma separated list of network names", cxxopts::value<string>())
-        (pod_path_Id, "Only if no network_list Update all the networks according to a pod file. "
+        (pod_path_Id, "Only if no network_list. Update all the networks according to a pod file. "
                       "The argument is the path to the pod file.",cxxopts::value<string>())
         (dry_run_Id, "Perform a dry-run. Prints out the new `plist` file instead of overwriting.")
         (show_networks_Id, "Show the list of supported network names.")
