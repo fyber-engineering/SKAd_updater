@@ -182,7 +182,7 @@ void Plist::update_file(bool backup)
   if (backup) {
     auto next_backup_id = std::to_string(get_next_backup_id(path, file_name));
 
-    _backup_name = path.parent_path() / (file_name + backup_extension + next_backup_id);
+    _backup_name = get_parent_path(path) / (file_name + backup_extension + next_backup_id);
 
     fs::copy(path, _backup_name);
     spdlog::info("Backup `{}` created at `{}`", _file_path, _backup_name);
@@ -196,7 +196,9 @@ int Plist::get_next_backup_id(const std::filesystem::path& path, const string& f
 {
   int max = 0;
   int curr;
-  for (const auto& entry : fs::directory_iterator(path.parent_path())) {
+  fs::path folder_path = get_parent_path(path);
+
+  for (const auto& entry : fs::directory_iterator(folder_path)) {
     if (common::starts_with(entry.path().filename(), file_name + backup_extension)) {
       auto ext = entry.path().filename().extension().string().erase(0, 1);
       if (common::is_integer(ext)) {
@@ -206,6 +208,11 @@ int Plist::get_next_backup_id(const std::filesystem::path& path, const string& f
     }
   }
   return max + 1;
+}
+
+fs::path Plist::get_parent_path(const std::filesystem::path& path)
+{
+  return path.has_parent_path() ? path.parent_path() : fs::current_path();
 }
 
 }  // namespace fyber

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 
 set(MAIN_PROJECT_NAME skad_updater)
 
-project(${MAIN_PROJECT_NAME} VERSION 1.0.3
+project(${MAIN_PROJECT_NAME} VERSION 1.0.4
         DESCRIPTION "Update the SKAdNetworks in your plist file"
         LANGUAGES CXX)
 
