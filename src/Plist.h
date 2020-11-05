@@ -32,6 +32,7 @@ class Plist
   static bool value_is(const pugi::xml_node& item, const char* text);
   static bool name_is(const pugi::xml_node& item, const char* text);
   static int get_next_backup_id(const std::filesystem::path& path, const string& file_name);
+  static std::filesystem::path get_parent_path(const std::filesystem::path& path);
   static pugi::xml_node get_or_create_SKAdNetworkItems_xml(pugi::xml_node& plist_main_dictionary);
   static pugi::xml_node get_or_create_items_array_xml(pugi::xml_node& plist_main_dictionary,
                                                       const pugi::xml_node& skAdNetworkItems_key);
