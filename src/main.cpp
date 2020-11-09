@@ -12,7 +12,7 @@
 void set_log_level();
 std::vector<std::string> networks_list_by_podfile(const fyber::ManagerApi& manager_api, const fyber::Options& options);
 std::vector<std::string> networks_list_by_options(const fyber::Options& options);
-void merge_network_lists(std::vector<std::string> & base_networks, std::vector<std::string>& networks_to_merge);
+void merge_network_lists(std::vector<std::string>& base_networks, std::vector<std::string>& networks_to_merge);
 void update_network_IDs(const fyber::Options& options, fyber::Plist& plist);
 
 int main(int argc, char** argv)
@@ -125,12 +125,12 @@ std::vector<std::string> networks_list_by_options(const fyber::Options& options)
 /// <b> NOTE: </b> This is function is mutating its paramters
 /// \param base_networks the list to merge into
 /// \param networks_to_merge the list that will be merged
-void merge_network_lists(std::vector<std::string> & base_networks, std::vector<std::string>& networks_to_merge)
+void merge_network_lists(std::vector<std::string>& base_networks, std::vector<std::string>& networks_to_merge)
 {
-        std::remove_copy_if(networks_to_merge.begin(), networks_to_merge.end(), back_inserter(base_networks),
-                   [&base_networks](const std::string& network) {
-                     return base_networks.end() != std::find(base_networks.begin(), base_networks.end(), network);
-                   });
+  std::remove_copy_if(networks_to_merge.begin(), networks_to_merge.end(), back_inserter(base_networks),
+                      [&base_networks](const std::string& network) {
+                        return base_networks.end() != std::find(base_networks.begin(), base_networks.end(), network);
+                      });
 }
 
 /// Update or Print (on `dry_run`) the Info.Plist file

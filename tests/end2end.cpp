@@ -249,11 +249,13 @@ TEST_F(End2End, PodFileNewNetworksWithExplicitNetworkList)
             (WelcomeToSkadMsg +
              "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
              "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK, Inmobi, Facebook\n"
-             "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, inmobi.more.skad.id, inmobi.skad.id\n"
+             "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, "
+             "inmobi.more.skad.id, inmobi.skad.id\n"
              "*** Updating `" +
              resources.string() +
              "/Info.plist`\n"
-             "*** These network IDs will be added: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, inmobi.more.skad.id, inmobi.skad.id\n")
+             "*** These network IDs will be added: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, "
+             "inmobi.more.skad.id, inmobi.skad.id\n")
                 .c_str());
       });
 }
