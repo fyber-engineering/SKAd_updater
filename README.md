@@ -17,12 +17,13 @@ SKAdNetwork ID auto updater
 ### Description
  Pull the most up-to-date SKAdNetworks from https://github.com/fyber-engineering/SKAdNetworks and updates the info.plist appropriately.
 
- The list of required networks can be requested in two ways:
+ The list of required networks can be requested in several ways:
 
 1.   Explicitly:
      1.  Asking for a list of supported ad network names with the `--show_networks` flag.
      1.  Passing the `[--network_list <network-name-list>]` parameter where <network-name-list> is a comma separated list of network names.
 1.   Automatically deriving the required networks from a `pod file`, by using the `[ --pod_file_path <pod-file-path> ]` parameter where `<pod-file-path>` is the path to the pod file.
+1. Combining the automatically derived networks from the `pod file` and an explicit network list, by using both the `[ --pod_file_path <pod-file-path> ]` and the `[--network_list <network-name-list>]` parameters.
 
 #### Parameters:
 
@@ -41,13 +42,17 @@ SKAdNetwork ID auto updater
      
      skad_updater --show_networks
      
+     skad_updater --plist_file_path <Path to plist> --pod_file_path <Path to Pod File> --dry_run
+
      skad_updater --plist_file_path <Path to plist> --pod_file_path <Path to Pod File>
 
-     skad_updater --plist_file_path <Path to plist> --pod_file_path <Path to Pod File> --dry_run
+     skad_updater --plist_file_path <Path to plist> --network_list <CSV network list> --dry_run
 
      skad_updater --plist_file_path <Path to plist> --network_list <CSV network list>
 
-     skad_updater --plist_file_path <Path to plist> --network_list <CSV network list> --dry_run
+     skad_updater --plist_file_path <Path to plist> --network_list <CSV network list> --pod_file_path <Path to Pod File> --dry_run
+
+     skad_updater --plist_file_path <Path to plist> --network_list <CSV network list> --pod_file_path <Path to Pod File>
 
 ### Backups
 Current/Previous info.plist will be backed up to info.plist.bak.X in the same directory in case the plist is modified, where X is the number of backup.

@@ -31,6 +31,10 @@ where is a comma separated list of network names.
 Automatically deriving the required networks from a \f[C]pod file\f[R],
 by using the \f[C][ --pod_file_path \f[I]<pod-file-path>\f[R] ]\f[R] parameter where
 \f[C]<pod-file-path>\f[R] is the path to the pod file.
+.IP "3." 3
+Combining the automatically derived networks from a \f[C]pod file\f[R] 
+and an explicit network list, by using both the \f[C][ --pod_file_path \f[I]<pod-file-path>\f[R] ]\f[R] 
+and the \f[C][--network_list \f[I]<network-name-list>\f[R]]\f[R] parameters.
 .SH PARAMETERS
 .PP
 .TS
@@ -100,13 +104,17 @@ T}
 
  skad_updater --show_networks
 
+ skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --pod_file_path \f[I]<Path to Pod File>\f[R] --dry_run
+
  skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --pod_file_path \f[I]<Path to Pod File>\f[R]
 
- skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --pod_file_path \f[I]<Path to Pod File>\f[R] --dry_run
+ skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --network_list \f[I]<CSV network list>\f[R] --dry_run
 
  skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --network_list \f[I]<CSV network list>\f[R]
 
- skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --network_list \f[I]<CSV network list>\f[R] --dry_run
+ skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --pod_file_path \f[I]<Path to Pod File>\f[R] --network_list \f[I]<CSV network list>\f[R] --dry_run
+
+ skad_updater --plist_file_path \f[I]<Path to plist>\f[R] --pod_file_path \f[I]<Path to Pod File>\f[R] --network_list \f[I]<CSV network list>\f[R]
 
 \f[R]
 .fi
