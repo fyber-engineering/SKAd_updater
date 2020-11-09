@@ -172,14 +172,14 @@ TEST_F(End2End, ShowNetworks)
   auto result = run_skad_updater("--show_networks");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
-                "Supported network names: AdColony,Google-Mobile-Ads-SDK,ChartboostSDK,Applovin,Unknown_network")
+                "Supported network names: AdColony,Google-Mobile-Ads-SDK,ChartboostSDK,Applovin,Unknown_network\n")
                    .c_str());
 
   result = run_skad_updater("--show_networks --plist_file_path " + (resources / "Info.plist").string() +
                             " --network_list=Facebook");
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
-                "Supported network names: AdColony,Google-Mobile-Ads-SDK,ChartboostSDK,Applovin,Unknown_network")
+                "Supported network names: AdColony,Google-Mobile-Ads-SDK,ChartboostSDK,Applovin,Unknown_network\n")
                    .c_str());
 }
 
