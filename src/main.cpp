@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
     if (options.show_networks) {
       auto networks = manager_api.get_networks();
-      std::cout << "Supported network names: " << fyber::common::join(networks, ",");
+      std::cout << "Supported network names: " << fyber::common::join(networks, ",") << std::endl;
       return 0;
     }
 
