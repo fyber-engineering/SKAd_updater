@@ -1,0 +1,105 @@
+# frozen_string_literal: true
+source 'https://github.com/CocoaPods/Specs.git'
+workspace 'FairBid'
+
+inhibit_all_warnings!
+install! 'cocoapods', deterministic_uuids: false
+
+platform :ios, '9.0'
+
+def mediation_sdks
+  pod 'AdColony', '4.4.0'
+  pod 'AppLovinSDK', '6.14.3'
+  pod 'ChartboostSDK', '8.3.1'
+  pod 'FBAudienceNetwork', '6.0.0'
+  pod 'Google-Mobile-Ads-SDK', '7.64.0'
+end
+
+def sdk_tools
+  pod 'IQKeyboardManager', '6.5.5'
+  pod 'SwiftMessages', '7.0.1'
+  pod 'HTTPProxy', '0.0.4'
+end
+
+def test_app_pods
+  platform :ios, '9.0'
+  use_frameworks!
+
+  mediation_sdks
+  sdk_tools
+
+  # Distribution and Analytics
+  pod 'Firebase/Crashlytics'
+end
+
+target 'Test App Dev' do
+  project 'FairBid'
+  test_app_pods
+end
+
+target 'Test App Prod' do
+  project 'FairBid'
+  test_app_pods
+
+  pod 'FairBidSDK', :podspec => '.'
+end
+
+['SDK Test App Tests', 'FairBidSDK Tests'].each do |target_name|
+  target(target_name) do
+    project 'FairBid'
+    use_frameworks!
+
+    pod 'Nimble', '~> 8.0.2'
+    pod 'Quick', '~> 2.1.0'
+    pod 'OCMock', '~> 3.4.0'
+  end
+end
+
+target 'SDKTools' do
+  project 'Tools/Tools'
+  use_frameworks!
+
+  sdk_tools
+end
+
+['SDKToolsTests'].each do |target_name|
+  target(target_name) do
+    project 'Tools/Tools'
+    use_frameworks!
+
+    pod 'Nimble', '~> 8.0.2'
+    pod 'Quick', '~> 2.1.0'
+    pod 'OCMock', '~> 3.4.0'
+  end
+end
+
+target 'FairBidSDK' do
+    project 'FairBid'
+    use_frameworks!
+    pod 'Fyber_FMPAdapter', '7.7.1'
+end
+
+target 'AdaptersTests' do
+  project 'Adapters/Adapters'
+  use_frameworks!
+
+  mediation_sdks
+  pod 'Firebase/Crashlytics' #SDKTOOLS-631
+end
+
+# Project
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['BITCODE_GENERATION_MODE'] = "bitcode"
+      next unless config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] == "8.0"
+        puts "Fixing Xcode 12: set IPHONEOS_DEPLOYMENT_TARGET to 9.0, target: #{target}"
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = "9.0"
+    end
+  end
+
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+  end
+end

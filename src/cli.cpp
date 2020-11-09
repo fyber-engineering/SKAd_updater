@@ -48,9 +48,9 @@ Options cli::read_args(int argc, char **argv)
     // clang-format off
     options.add_options()
         (plist_file_path_Id, "The plist file path", cxxopts::value<string>())
-        (network_list_Id, "Only if no pod_file_path. Request for a specific list of networks to update. "
+        (network_list_Id, "Request for a specific list of networks to update. "
                           "The argument is a comma separated list of network names", cxxopts::value<string>())
-        (pod_file_path_Id, "Only if no network_list Update all the networks according to a pod file. "
+        (pod_file_path_Id, "Update all the networks according to a pod file. "
                       "The argument is the path to the pod file.",cxxopts::value<string>())
         (dry_run_Id, "Perform a dry-run. Prints out the new `plist` file instead of overwriting.")
         (show_networks_Id, "Show the list of supported network names.")
@@ -65,9 +65,9 @@ Options cli::read_args(int argc, char **argv)
         throw ExitMessage::InvalidArguments("Missing required parameter `plist_file_path`.\n" + options.help());
       }
 
-      if (result.count(network_list_Id) == result.count(pod_file_path_Id)) {
+      if (result.count(network_list_Id) == 0 and result.count(pod_file_path_Id) == 0) {
         throw ExitMessage::InvalidArguments(
-            "Exactly one of the parameters `network_list` and `pod_file_path` is required.\n\n" + options.help());
+            "At least one of the parameters `network_list` or `pod_file_path` is required.\n\n" + options.help());
       }
     }
 

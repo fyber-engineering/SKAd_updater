@@ -1,6 +1,5 @@
+#include <algorithm>
 #include <iostream>
-#include <string>
-#include <variant>
 
 #include "ManagerApi.h"
 #include "Plist.h"
@@ -13,6 +12,7 @@
 void set_log_level();
 std::vector<std::string> networks_list_by_podfile(const fyber::ManagerApi& manager_api, const fyber::Options& options);
 std::vector<std::string> networks_list_by_options(const fyber::Options& options);
+void merge_network_lists(std::vector<std::string> & base_networks, std::vector<std::string>& networks_to_merge);
 void update_network_IDs(const fyber::Options& options, fyber::Plist& plist);
 
 int main(int argc, char** argv)
@@ -52,9 +52,15 @@ int main(int argc, char** argv)
 
     if (options.pod_file_path.has_value()) {
       network_list = networks_list_by_podfile(manager_api, options);
-    } else {
-      network_list = networks_list_by_options(options);
     }
+
+    if (options.network_list.has_value()) {
+      std::vector<std::string> explicit_network_list = networks_list_by_options(options);
+
+      merge_network_lists(network_list, explicit_network_list);
+    }
+
+    spdlog::info("Fetching SKAdNetworks for: {}", fyber::common::join(network_list, ", "));
 
     plist.set_sk_ad_network_items_for_update(manager_api.get_sk_ad_networks(network_list));
 
@@ -113,6 +119,18 @@ std::vector<std::string> networks_list_by_options(const fyber::Options& options)
     throw fyber::ExitMessage::EmptyNetworkList("A non-empty list of networks must be provided");
   }
   return networks;
+}
+
+/// Merge two network lists uniquely while perserving order </br>
+/// <b> NOTE: </b> This is function is mutating its paramters
+/// \param base_networks the list to merge into
+/// \param networks_to_merge the list that will be merged
+void merge_network_lists(std::vector<std::string> & base_networks, std::vector<std::string>& networks_to_merge)
+{
+        std::remove_copy_if(networks_to_merge.begin(), networks_to_merge.end(), back_inserter(base_networks),
+                   [&base_networks](const std::string& network) {
+                     return base_networks.end() != std::find(base_networks.begin(), base_networks.end(), network);
+                   });
 }
 
 /// Update or Print (on `dry_run`) the Info.Plist file

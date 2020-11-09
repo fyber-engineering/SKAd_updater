@@ -29,8 +29,8 @@ SKAdNetwork ID auto updater
 | Parameter | Value  | Description  |
 | :- | :-: | :-: |
 | `--plist_file_path` | \<plist-file-path\> | The plist file path. |
-| `--network_list` | \<comma-separated-network-names\> | Only if no pod_file_path. Request for a specific list of networks to update. The argument is a comma separated list of network names. |
-| `--pod_file_path` | \<pod-file-path\> | network_list if provided will be ignored. Update all the networks found in the pod file.  The argument is the path to the pod file. |
+| `--network_list` | \<comma-separated-network-names\> | Request for a specific list of networks to update. The argument is a comma separated list of network names. |
+| `--pod_file_path` | \<pod-file-path\> | Update all the networks found in the pod file.  The argument is the path to the pod file. |
 | **Optional Parameters** ||
 | `--dry_run` | | Perform a dry-run. Prints out the new `plist` file instead of overwriting.|
 | `--show_networks` | | Show the list of supported network names.| 
