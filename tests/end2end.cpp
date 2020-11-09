@@ -190,6 +190,7 @@ TEST_F(End2End, NetworkListUnchanged)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Fetching SKAdNetworks for: Facebook\n"
                 "*** New SKAdNetworks: \n"
                 "*** Nothing to update. `" +
                 resources.string() + "/Info.plist` unchanged.\n")
@@ -203,6 +204,7 @@ TEST_F(End2End, NetworkListNewNetworks)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Fetching SKAdNetworks for: Applovin\n"
                 "*** New SKAdNetworks: ludvb6z3bs.skadnetwork\n"
                 "*** Updating `" +
                 resources.string() +
@@ -218,12 +220,44 @@ TEST_F(End2End, PodFileNewNetworks)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                 "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n"
                 "*** Updating `" +
                 resources.string() +
                 "/Info.plist`\n"
                 "*** These network IDs will be added: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n")
                    .c_str());
+}
+
+TEST_F(End2End, PodFileNewNetworksWithExplicitNetworkList)
+{
+  with_mock_data(
+      R"({"AdColony": ["4PFYVQ9L8R.skadnetwork", "YCLNXRL5PM.skadnetwork"],)"
+      R"("Google-Mobile-Ads-SDK": ["cstr6suwn9.skadnetwork"],)"
+      R"("ChartboostSDK": ["blskdfjl2e3.skadnetwork"],)"
+      R"("Applovin": ["ludvb6z3bs.skadnetwork"],)"
+      R"("Inmobi":["inmobi.skad.id","inmobi.more.skad.id"],)"
+      R"("AnotherNetwork":["other.id"],)"
+      R"("Facebook": ["facebook.stuff"]})",
+      [](auto data) {
+        auto result = run_skad_updater("--plist_file_path " + (resources / "Info.plist").string() +
+                                       " --pod_file_path=" + (resources / "Podfile").string() +
+                                       " --network_list=Inmobi,Facebook"
+                                       " --dry_run");
+        ASSERT_STREQ(
+            result.c_str(),
+            (WelcomeToSkadMsg +
+             "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+             "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK, Inmobi, Facebook\n"
+             "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, "
+             "inmobi.more.skad.id, inmobi.skad.id\n"
+             "*** Updating `" +
+             resources.string() +
+             "/Info.plist`\n"
+             "*** These network IDs will be added: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork, facebook.stuff, "
+             "inmobi.more.skad.id, inmobi.skad.id\n")
+                .c_str());
+      });
 }
 
 TEST_F(End2End, PodFileNoNetworks)
@@ -248,6 +282,7 @@ TEST_F(End2End, PodFileNewIDsOverridingExistingNetworksAreJustAdded)
             result.c_str(),
             (WelcomeToSkadMsg +
              "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+             "*** Fetching SKAdNetworks for: AdColony, AppLovinSDK\n"
              "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n"
              "*** Updating `" +
              resources.string() +
@@ -264,6 +299,7 @@ TEST_F(End2End, PlistIsEmpty)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: \n"
+                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, blskdfjl2e3.skadnetwork, "
                 "cstr6suwn9.skadnetwork\n"
                 "*** Updating `" +
@@ -299,6 +335,7 @@ TEST_F(End2End, PlistIsFull)
                 "ludvb6z3bs.skadnetwork, mlmmfzh3r3.skadnetwork, ppxm28t8ap.skadnetwork, prcb7njmu6.skadnetwork, "
                 "t38b2kh725.skadnetwork, uw77j35x4d.skadnetwork, v79kvwwj4g.skadnetwork, wg4vff78zm.skadnetwork, "
                 "y45688jllp.skadnetwork, ydx93a7ass.skadnetwork, zmvfpc5aq8.skadnetwork\n"
+                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                 "*** New SKAdNetworks: blskdfjl2e3.skadnetwork\n"
                 "*** Updating `" +
                 resources.string() +
@@ -313,6 +350,7 @@ TEST_F(End2End, PlistHasNoSKAdNetworksKey)
                                  " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(), (WelcomeToSkadMsg +
                                 "*** Existing SKAdNetworks: \n"
+                                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, "
                                 "blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n"
                                 "*** Updating `" +
@@ -329,6 +367,7 @@ TEST_F(End2End, PlistIsSimple)
                                  " --pod_file_path=" + (resources / "Podfile").string() + " --dry_run");
   ASSERT_STREQ(result.c_str(), (WelcomeToSkadMsg +
                                 "*** Existing SKAdNetworks: 4PFYVQ9L8R, YCLNXRL5PM, cstr6suwn9\n"
+                                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, "
                                 "blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n"
                                 "*** Updating `" +
@@ -415,6 +454,7 @@ TEST_F(End2End, NoDryRun)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: 4PFYVQ9L8R.skadnetwork, V72QYCH5UU.skadnetwork, YCLNXRL5PM.skadnetwork\n"
+                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                 "*** New SKAdNetworks: blskdfjl2e3.skadnetwork, cstr6suwn9.skadnetwork\n"
                 "*** Updating `" +
                 resources.string() +
@@ -465,6 +505,7 @@ TEST_F(End2End, NoDryRunEmptyPlist)
   ASSERT_STREQ(result.c_str(),
                (WelcomeToSkadMsg +
                 "*** Existing SKAdNetworks: \n"
+                "*** Fetching SKAdNetworks for: AdColony, ChartboostSDK, Google-Mobile-Ads-SDK\n"
                 "*** New SKAdNetworks: 4PFYVQ9L8R.skadnetwork, YCLNXRL5PM.skadnetwork, blskdfjl2e3.skadnetwork, "
                 "cstr6suwn9.skadnetwork\n"
                 "*** Updating `" +
